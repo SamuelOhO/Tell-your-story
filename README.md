@@ -133,6 +133,11 @@ Optional custom backup directory:
 - Session summary memory updates (`SUMMARY_UPDATE_EVERY`)
 - STT/TTS APIs (`/interview/stt`, `/interview/tts`)
 - Draft generation and latest draft fetch (`/interview/draft`, `/interview/draft/latest/{id}`)
+- Health endpoint (`/health`) with app/db status (`ok` or `degraded`)
+
+## Observability
+- Standard API request logs: method, path, status code, duration, request id.
+- Error type logs: `validation`, `auth`, `provider`, `db`.
 
 ## CI Troubleshooting
 - `pytest` import errors for `backend`: run tests from repository root and use `python -m pytest -q tests`.

@@ -1,7 +1,10 @@
+import logging
+
 from openai import OpenAI
 from ..config import get_settings
 
 settings = get_settings()
+logger = logging.getLogger("tell-your-story.stt")
 client = None
 if settings.provider_api_key:
     client = OpenAI(api_key=settings.provider_api_key, base_url=settings.openai_base_url)
@@ -18,6 +21,9 @@ async def transcribe_audio(file_path: str) -> str:
                 language="ko"
             )
         return transcript.text
-    except Exception as e:
-        print(f"Error in transcription: {type(e).__name__}")
+    except Exception as exc:
+        logger.exception(
+            "service_error error_type=provider service=stt operation=transcribe exception=%s",
+            type(exc).__name__,
+        )
         return ""
