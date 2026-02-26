@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 from typing import Any
 
 from openai import OpenAI
@@ -7,6 +8,7 @@ from openai import OpenAI
 from ..config import get_settings
 
 settings = get_settings()
+logger = logging.getLogger("tell-your-story.llm")
 client = None
 if settings.provider_api_key:
     client = OpenAI(
@@ -110,8 +112,11 @@ async def generate_interview_response(
         if not reaction or not next_question:
             raise ValueError("Model response does not include required fields.")
         return {"reaction": reaction, "next_question": next_question}
-    except Exception as e:
-        print(f"Error in LLM: {type(e).__name__}")
+    except Exception as exc:
+        logger.exception(
+            "service_error error_type=provider service=llm operation=chat exception=%s",
+            type(exc).__name__,
+        )
         return {
             "reaction": "아, 그렇군요. 정말 소중한 이야기네요.",
             "next_question": "그 다음에는 어떤 일이 있었나요?",
@@ -146,8 +151,11 @@ async def generate_session_summary(
         response = await asyncio.to_thread(_create_chat_completion, messages)
         summary = (response.choices[0].message.content or "").strip()
         return summary or existing_summary
-    except Exception as e:
-        print(f"Error in summary generation: {type(e).__name__}")
+    except Exception as exc:
+        logger.exception(
+            "service_error error_type=provider service=llm operation=summary exception=%s",
+            type(exc).__name__,
+        )
         return existing_summary
 
 
@@ -178,6 +186,9 @@ async def generate_autobiography_draft(session_summary: str, messages: list[dict
         if not draft:
             raise ValueError("Empty draft response")
         return draft
-    except Exception as e:
-        print(f"Error in draft generation: {type(e).__name__}")
+    except Exception as exc:
+        logger.exception(
+            "service_error error_type=provider service=llm operation=draft exception=%s",
+            type(exc).__name__,
+        )
         return "[초안 생성에 실패했습니다. 잠시 후 다시 시도해주세요.]"

@@ -20,6 +20,17 @@ def _connect() -> sqlite3.Connection:
     return conn
 
 
+def check_db_health() -> tuple[bool, str]:
+    try:
+        with _connect() as conn:
+            conn.execute("SELECT 1").fetchone()
+        return True, "ok"
+    except sqlite3.Error as exc:
+        return False, str(exc)
+    except Exception as exc:
+        return False, str(exc)
+
+
 def init_db() -> None:
     with _connect() as conn:
         conn.execute(
