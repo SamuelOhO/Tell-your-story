@@ -1,4 +1,5 @@
 # Tell Your Story
+[![CI](https://github.com/SamuelOhO/Tell-your-story/actions/workflows/ci.yml/badge.svg)](https://github.com/SamuelOhO/Tell-your-story/actions/workflows/ci.yml)
 
 ## Quick Start
 
@@ -132,3 +133,9 @@ Optional custom backup directory:
 - Session summary memory updates (`SUMMARY_UPDATE_EVERY`)
 - STT/TTS APIs (`/interview/stt`, `/interview/tts`)
 - Draft generation and latest draft fetch (`/interview/draft`, `/interview/draft/latest/{id}`)
+
+## CI Troubleshooting
+- `pytest` import errors for `backend`: run tests from repository root and use `python -m pytest -q tests`.
+- local pytest hangs because of third-party plugins: set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` before test run.
+- frontend install issues in non-ASCII path: use `.\scripts\dev-frontend.ps1` or install in an ASCII path.
+- CI workflow uses Ubuntu runner path + `frontend/package-lock.json` to avoid local Windows path issues.
