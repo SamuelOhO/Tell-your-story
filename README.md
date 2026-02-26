@@ -146,3 +146,13 @@ PostgreSQL migration strategy is documented in `docs/DB_MIGRATION_PLAN.md`.
 - local pytest hangs because of third-party plugins: set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` before test run.
 - frontend install issues in non-ASCII path: use `.\scripts\dev-frontend.ps1` or install in an ASCII path.
 - CI workflow uses Ubuntu runner path + `frontend/package-lock.json` to avoid local Windows path issues.
+
+### Local CI-equivalent check
+```powershell
+.\scripts\verify-local.ps1
+```
+
+Backend only:
+```powershell
+.\scripts\verify-local.ps1 -SkipFrontend
+```
