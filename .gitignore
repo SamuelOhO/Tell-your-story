@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
+# Backend secrets
+backend/.env
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/.npm-cache-temp/
+
+# Local temp/verification artifacts
+.tmp_frontend_verify/
+/package-lock.json
+
+# Build outputs
+dist/
+frontend/dist/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
