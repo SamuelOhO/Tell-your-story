@@ -1,14 +1,10 @@
-import os
 from openai import OpenAI
-from dotenv import load_dotenv
+from ..config import get_settings
 
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY") or os.getenv("UPSTAGE_API_KEY")
-base_url = os.getenv("OPENAI_BASE_URL")
+settings = get_settings()
 client = None
-if api_key:
-    client = OpenAI(api_key=api_key, base_url=base_url)
+if settings.provider_api_key:
+    client = OpenAI(api_key=settings.provider_api_key, base_url=settings.openai_base_url)
 
 async def generate_audio(text: str, output_path: str):
     if not client:

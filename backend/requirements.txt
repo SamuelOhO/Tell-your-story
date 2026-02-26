@@ -2,7 +2,6 @@ fastapi
 uvicorn
 openai
 python-dotenv
-langchain
-langchain-openai
-chromadb
 pydantic
+pytest
+python-multipart

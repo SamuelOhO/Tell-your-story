@@ -5,6 +5,7 @@ __pycache__/
 
 # Backend secrets
 backend/.env
+backend/data/*.db
 
 # Node
 node_modules/
@@ -20,6 +21,7 @@ frontend/frontend/
 # Build outputs
 dist/
 frontend/dist/
+backend/static/tts_*.mp3
 
 # OS/editor noise
 .DS_Store
