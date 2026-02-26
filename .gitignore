@@ -10,6 +10,8 @@ backend/.env
 node_modules/
 frontend/node_modules/
 frontend/.npm-cache-temp/
+frontend/.git/
+frontend/frontend/
 
 # Local temp/verification artifacts
 .tmp_frontend_verify/
