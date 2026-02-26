@@ -128,6 +128,8 @@ Optional custom backup directory:
 .\scripts\backup-db.ps1 -RestoreFrom "backups/tell_your_story_20260226_120000.db"
 ```
 
+PostgreSQL migration strategy is documented in `docs/DB_MIGRATION_PLAN.md`.
+
 ## Current Features
 - Session-based interview flow (`/interview/start`, `/interview/chat`, `/interview/session/{id}`)
 - Session summary memory updates (`SUMMARY_UPDATE_EVERY`)
