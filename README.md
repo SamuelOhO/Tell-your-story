@@ -100,6 +100,33 @@ VITE_API_BASE_URL=https://api.your-domain.com
 
 Invalid configuration now fails fast during application startup with clear error messages.
 
+## SQLite Operations
+
+### DB health check
+```powershell
+.\scripts\check-db.ps1
+```
+
+Optional custom path:
+```powershell
+.\scripts\check-db.ps1 -DbPath "backend/data/tell_your_story.db"
+```
+
+### DB backup
+```powershell
+.\scripts\backup-db.ps1
+```
+
+Optional custom backup directory:
+```powershell
+.\scripts\backup-db.ps1 -BackupDir "backups"
+```
+
+### DB restore (from backup file)
+```powershell
+.\scripts\backup-db.ps1 -RestoreFrom "backups/tell_your_story_20260226_120000.db"
+```
+
 ## Current Features
 - Session-based interview flow (`/interview/start`, `/interview/chat`, `/interview/session/{id}`)
 - Session summary memory updates (`SUMMARY_UPDATE_EVERY`)

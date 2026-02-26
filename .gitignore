@@ -6,6 +6,7 @@ __pycache__/
 # Backend secrets
 backend/.env
 backend/data/*.db
+backups/
 
 # Node
 node_modules/
