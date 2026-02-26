@@ -186,3 +186,47 @@
 1. SQLite -> PostgreSQL 마이그레이션 및 Alembic 스키마 관리
 2. 세션 요약 품질 평가 지표 도입(질문 일관성/주제 유지율)
 3. 초안 생성 결과 편집 UI(단락별 수정/저장) 추가
+
+## 운영화 실행 기록 (A->B->C->D, 2026-02-26)
+
+### Phase A. 환경/설정 운영화
+- 진행 현황:
+  - [x] `backend/config.py` fail-fast 검증 강화(`APP_ENV`, `LOG_LEVEL`, 정수 범위, CORS origin 형식)
+  - [x] `backend/.env.example`, `frontend/.env.example` 보강
+  - [x] `README.md` DEV/PROD 환경 가이드 및 설정 키 표 추가
+- 특이사항 및 참고사항:
+  - `backend/.env`를 명시 경로로 로드하도록 수정하여 루트 실행 시에도 환경값이 일관되게 적용됨.
+  - 잘못된 환경값은 서버 부팅 단계에서 명확한 예외로 실패하도록 변경됨.
+
+### Phase B. DB 운영 준비 (SQLite)
+- 진행 현황:
+  - [x] `scripts/check-db.ps1` 추가 (경로/권한/읽기 가능 여부 점검)
+  - [x] `scripts/backup-db.ps1` 추가 (백업/복원)
+- 특이사항 및 참고사항:
+  - B 범위는 PostgreSQL 즉시 전환이 아니라 SQLite 운영 안정화임.
+  - 백업 파일은 `backups/`에 저장되며 `.gitignore` 처리됨.
+
+### Phase C. CI 파이프라인
+- 진행 현황:
+  - [x] `.github/workflows/ci.yml` 추가 (pytest + frontend lint/build)
+  - [x] `frontend/package-lock.json` 추가 (`npm ci` 기반 고정)
+  - [x] `README.md` CI 배지/트러블슈팅 섹션 추가
+- 특이사항 및 참고사항:
+  - CI는 Ubuntu 경로에서 실행되므로 Windows 한글 경로 이슈와 분리됨.
+  - 로컬에서는 필요 시 ASCII 임시 경로에서 frontend 검증 수행 권장.
+
+### Phase D. 운영 관측성
+- 진행 현황:
+  - [x] API 요청/응답 표준 로그 적용(`request_id`, `status_code`, `duration_ms`)
+  - [x] 오류 타입 로깅(`validation`, `auth`, `provider`, `db`)
+  - [x] `/health` 엔드포인트 추가 (DB 상태 포함, degraded 응답 지원)
+- 특이사항 및 참고사항:
+  - 서비스 레이어의 `print`를 로거 기반 예외 로그로 교체함.
+  - DB 장애 시 `/health`는 `503`과 `status=degraded`를 반환함.
+
+### B-2. PostgreSQL 전환 문서화
+- 진행 현황:
+  - [x] `docs/DB_MIGRATION_PLAN.md` 작성
+- 특이사항 및 참고사항:
+  - 개발/스테이징은 Docker Compose, 운영은 관리형 PostgreSQL 권고.
+  - 다운타임 최소화 및 롤백 절차를 포함해 문서화 완료.
