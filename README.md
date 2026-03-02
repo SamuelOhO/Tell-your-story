@@ -1,27 +1,22 @@
 # Tell Your Story
 [![CI](https://github.com/SamuelOhO/Tell-your-story/actions/workflows/ci.yml/badge.svg)](https://github.com/SamuelOhO/Tell-your-story/actions/workflows/ci.yml)
 
-## Quick Start
+## 현재 상태
+- 백엔드/프론트 기본 기능 구현 완료
+- 세션 기반 인터뷰, STT/TTS, 자서전 초안 생성, `/health` 지원
+- CI(GitHub Actions)에서 `pytest + frontend lint/build` 자동 검증
+- 프론트 UI를 최근 버전으로 전면 개편
+- 인터뷰 질문을 더 구체적으로 나오도록 서버 프롬프트 규칙 강화
 
-### 1. Backend (Terminal A)
+## 로컬에서 내려받아 실행하기 (Windows/Powershell)
+
+### 1. 저장소 클론
 ```powershell
-.\venv\Scripts\Activate.ps1
-uvicorn backend.main:app --reload
+git clone https://github.com/SamuelOhO/Tell-your-story.git
+cd Tell-your-story
 ```
 
-Backend URL: `http://localhost:8000`
-
-### 2. Frontend (Terminal B)
-```powershell
-cd frontend
-npm run dev
-```
-
-Frontend URL: `http://localhost:5173`
-
-## Initial Setup
-
-### 1. Backend
+### 2. 백엔드 준비
 ```powershell
 python -m venv venv
 .\venv\Scripts\python -m pip install --upgrade pip
@@ -29,23 +24,52 @@ python -m venv venv
 Copy-Item backend\.env.example backend\.env
 ```
 
-### 2. Frontend
+### 3. 프론트 준비
 ```powershell
 cd frontend
 npm install
 Copy-Item .env.example .env
+cd ..
 ```
 
-If `npm install` hangs in a cloud-sync or non-ASCII path, copy the project to an ASCII path (example: `C:\tmp`) and run again.
-
-### 3. Frontend Path Workaround Script
+### 4. 한 번에 실행 (권장)
 ```powershell
-.\scripts\dev-frontend.ps1
+.\scripts\dev-all.ps1
 ```
 
-## Environment Guide (DEV/PROD)
+### 5. 접속 주소
+- 프론트: `http://localhost:5173`
+- 백엔드: `http://localhost:8000`
 
-### Backend `.env` (DEV)
+## 경로 이슈가 있을 때 (한글 경로/클라우드 동기화 폴더)
+프론트 설치/실행이 멈추거나 `vite` 인식 오류가 나면 ASCII 경로 우회 모드를 사용하세요.
+
+```powershell
+.\scripts\dev-all.ps1 -UseAsciiFrontend
+```
+
+이미 우회 경로에 설치가 끝났다면:
+```powershell
+.\scripts\dev-all.ps1 -UseAsciiFrontend -SkipFrontendInstall
+```
+
+## 개별 실행
+
+### 백엔드
+```powershell
+.\venv\Scripts\Activate.ps1
+uvicorn backend.main:app --reload
+```
+
+### 프론트
+```powershell
+cd frontend
+npm run dev
+```
+
+## 환경 변수
+
+### 백엔드 `backend/.env` 예시 (DEV)
 ```env
 APP_ENV=dev
 LOG_LEVEL=INFO
@@ -59,100 +83,46 @@ DB_PATH=backend/data/tell_your_story.db
 SUMMARY_UPDATE_EVERY=6
 ```
 
-### Backend `.env` (PROD Example)
-```env
-APP_ENV=prod
-LOG_LEVEL=INFO
-UPSTAGE_API_KEY=***secret***
-OPENAI_API_KEY=
-OPENAI_BASE_URL=https://api.upstage.ai/v1
-LLM_MODEL=solar-pro2
-ALLOWED_ORIGINS=https://your-domain.com
-MAX_HISTORY_TURNS=12
-DB_PATH=/var/app/data/tell_your_story.db
-SUMMARY_UPDATE_EVERY=6
-```
-
-### Frontend `.env` (DEV)
+### 프론트 `frontend/.env` 예시 (DEV)
 ```env
 VITE_APP_ENV=development
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-### Frontend `.env` (PROD)
-```env
-VITE_APP_ENV=production
-VITE_API_BASE_URL=https://api.your-domain.com
-```
+## SQLite 운영 스크립트
 
-### Backend Config Keys
-| Key | Required | Default | Description |
-| --- | --- | --- | --- |
-| `APP_ENV` | Y | `dev` | Runtime environment (`dev`/`prod`/`test`) |
-| `LOG_LEVEL` | Y | `INFO` | Log level (`DEBUG`/`INFO`/`WARNING`/`ERROR`/`CRITICAL`) |
-| `UPSTAGE_API_KEY` | N | empty | LLM/STT/TTS provider key |
-| `OPENAI_API_KEY` | N | empty | OpenAI-compatible provider key (fallback) |
-| `OPENAI_BASE_URL` | N | empty | OpenAI-compatible endpoint URL |
-| `LLM_MODEL` | Y | `solar-pro2` | Model name for interview, summary, draft |
-| `ALLOWED_ORIGINS` | Y | `http://localhost:5173` | CORS origins (comma-separated) |
-| `MAX_HISTORY_TURNS` | Y | `12` | Number of recent turns to send to LLM (`1..100`) |
-| `DB_PATH` | Y | `backend/data/tell_your_story.db` | SQLite DB file path |
-| `SUMMARY_UPDATE_EVERY` | Y | `6` | Summary update interval (`1..100`) |
-
-Invalid configuration now fails fast during application startup with clear error messages.
-
-## SQLite Operations
-
-### DB health check
+### DB 상태 점검
 ```powershell
 .\scripts\check-db.ps1
 ```
 
-Optional custom path:
-```powershell
-.\scripts\check-db.ps1 -DbPath "backend/data/tell_your_story.db"
-```
-
-### DB backup
+### DB 백업
 ```powershell
 .\scripts\backup-db.ps1
 ```
 
-Optional custom backup directory:
+### DB 복원
 ```powershell
-.\scripts\backup-db.ps1 -BackupDir "backups"
+.\scripts\backup-db.ps1 -RestoreFrom "backups\tell_your_story_YYYYMMDD_HHMMSS.db"
 ```
 
-### DB restore (from backup file)
-```powershell
-.\scripts\backup-db.ps1 -RestoreFrom "backups/tell_your_story_20260226_120000.db"
-```
+PostgreSQL 전환 계획 문서: `docs/DB_MIGRATION_PLAN.md`
 
-PostgreSQL migration strategy is documented in `docs/DB_MIGRATION_PLAN.md`.
-
-## Current Features
-- Session-based interview flow (`/interview/start`, `/interview/chat`, `/interview/session/{id}`)
-- Session summary memory updates (`SUMMARY_UPDATE_EVERY`)
-- STT/TTS APIs (`/interview/stt`, `/interview/tts`)
-- Draft generation and latest draft fetch (`/interview/draft`, `/interview/draft/latest/{id}`)
-- Health endpoint (`/health`) with app/db status (`ok` or `degraded`)
-
-## Observability
-- Standard API request logs: method, path, status code, duration, request id.
-- Error type logs: `validation`, `auth`, `provider`, `db`.
-
-## CI Troubleshooting
-- `pytest` import errors for `backend`: run tests from repository root and use `python -m pytest -q tests`.
-- local pytest hangs because of third-party plugins: set `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` before test run.
-- frontend install issues in non-ASCII path: use `.\scripts\dev-frontend.ps1` or install in an ASCII path.
-- CI workflow uses Ubuntu runner path + `frontend/package-lock.json` to avoid local Windows path issues.
-
-### Local CI-equivalent check
+## 로컬 검증 (CI와 유사)
 ```powershell
 .\scripts\verify-local.ps1
 ```
 
-Backend only:
+백엔드만:
 ```powershell
 .\scripts\verify-local.ps1 -SkipFrontend
 ```
+
+## 문제 해결 빠른 체크
+- `vite is not recognized`:
+  - `frontend\node_modules` 손상 가능성이 큼
+  - `.\scripts\dev-all.ps1 -UseAsciiFrontend`로 우선 실행
+- `pytest`가 멈춤:
+  - `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` 설정 후 실행
+- 브라우저 접속:
+  - `localhost` 기준으로 접속 권장 (`127.0.0.1` 대신)

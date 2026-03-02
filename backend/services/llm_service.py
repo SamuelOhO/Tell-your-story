@@ -74,7 +74,7 @@ async def generate_interview_response(
     if not client:
         return {
             "reaction": f"아, '{normalized_user_text}'라고 하셨군요. (API 키가 설정되지 않아 모의 응답을 보냅니다)",
-            "next_question": "다음 질문은 무엇인가요?",
+            "next_question": "그 이야기는 몇 살 때였고, 그때 함께 있던 사람은 누구였나요?",
         }
 
     summary_context = session_summary.strip() or "아직 요약 없음"
@@ -90,6 +90,16 @@ async def generate_interview_response(
             1. 답변에 공감하고 경청합니다.
             2. 구체적인 에피소드를 이끌어내는 꼬리 질문을 합니다.
             3. 한 번에 하나의 질문만 합니다.
+            4. 추상 질문을 피하고, 반드시 아래 4요소 중 2개 이상을 질문에 포함합니다:
+               - 시기(언제, 몇 살, 어느 계절)
+               - 장소(어디에서)
+               - 인물(누구와)
+               - 행동/사건(무엇을 했는지)
+            5. 질문 길이는 1문장, 25자~60자 내외로 작성합니다.
+            6. 금지 예시: "그때 기분은 어땠나요?"(단독 질문), "자세히 말해주세요." 같은 포괄 질문.
+            7. 권장 형식 예시:
+               - "그 일은 몇 살 때였고, 그때 곁에 있던 사람은 누구였나요?"
+               - "그날은 어디에서 시작됐고, 가장 먼저 한 행동이 무엇이었나요?"
 
             출력 형식(JSON):
             {{
@@ -119,7 +129,7 @@ async def generate_interview_response(
         )
         return {
             "reaction": "아, 그렇군요. 정말 소중한 이야기네요.",
-            "next_question": "그 다음에는 어떤 일이 있었나요?",
+            "next_question": "그 일 이후에 가장 먼저 바뀐 일상 한 가지를, 장소와 함께 말씀해주실 수 있을까요?",
         }
 
 

@@ -1,7 +1,7 @@
-export default function Card({ children, className = "" }) {
+export default function Card({ children, className = '' }) {
     return (
-        <div className={`bg-white rounded-2xl shadow-xl p-8 ${className}`}>
+        <section className={`story-card ${className}`}>
             {children}
-        </div>
+        </section>
     )
 }

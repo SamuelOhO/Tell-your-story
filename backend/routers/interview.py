@@ -78,7 +78,7 @@ async def start_interview():
     return StartResponse(
         message="Interview started",
         session_id=session_id,
-        first_question="어린 시절 가장 기억에 남는 추억은 무엇인가요?",
+        first_question="초등학교 시절, 집이나 동네에서 자주 놀던 장소 한 곳을 떠올려볼까요? 누구와 있었고 무엇을 했는지부터 들려주세요.",
     )
 
 
